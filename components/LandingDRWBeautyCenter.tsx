@@ -13,6 +13,13 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 
+// TikTok Analytics type declaration
+declare global {
+  interface Window {
+    ttq: any;
+  }
+}
+
 /**
  * DRW Beauty Center – Landing Page (Kemitraan)
  * Version: v1 (Detail & Conversion-Driven)
@@ -32,6 +39,32 @@ export default function LandingDRWBeautyCenter() {
   const [agree, setAgree] = useState(false);
   const [error, setError] = useState("");
   const [isChatOpen, setIsChatOpen] = useState(false);
+
+  // TikTok page tracking
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.ttq) {
+      // Track page view with additional context
+      window.ttq.track('ViewContent', {
+        content_name: 'DRW Beauty Center Partnership Landing',
+        content_category: 'Landing Page',
+        content_id: 'partnership_landing_v1',
+        description: 'User viewed partnership opportunity page'
+      });
+    }
+  }, []);
+
+  // Track package selection changes
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.ttq && packageTier) {
+      window.ttq.track('ViewContent', {
+        content_name: packageTier + ' Package',
+        content_category: 'Partnership Package',
+        content_id: packageTier.toLowerCase(),
+        value: packageTier === 'PLATINUM' ? 50000000 : 25000000,
+        currency: 'IDR'
+      });
+    }
+  }, [packageTier]);
 
   // Grab UTM params for tracking
   const utm = useMemo(() => {
@@ -69,6 +102,22 @@ export default function LandingDRWBeautyCenter() {
     if (!/^\+?\d[\d\s-]{7,}$/.test(phone)) return setError("Nomor WhatsApp tidak valid.");
     if (!agree) return setError("Setujui kebijakan data terlebih dahulu.");
 
+    // TikTok Event: Lead Generated
+    if (typeof window !== 'undefined' && window.ttq) {
+      window.ttq.track('SubmitForm', {
+        content_name: 'Partnership Form',
+        content_category: 'Lead Generation',
+        value: packageTier === 'PLATINUM' ? 50000000 : 25000000,
+        currency: 'IDR',
+        contents: [{
+          content_id: packageTier,
+          content_name: packageTier + ' Package',
+          content_category: 'Partnership Package',
+          quantity: 1
+        }]
+      });
+    }
+
     // Build WhatsApp message
     const to = normalizePhone(process.env.NEXT_PUBLIC_WA_NUMBER || "62811944288"); // GANTI .env
 
@@ -103,11 +152,29 @@ export default function LandingDRWBeautyCenter() {
 
   // Smooth scroll helper
   function scrollToForm() {
+    // TikTok Event: User engaged with CTA
+    if (typeof window !== 'undefined' && window.ttq) {
+      window.ttq.track('ClickButton', {
+        content_name: 'Scroll to Form CTA',
+        content_category: 'User Engagement',
+        description: 'User clicked CTA to scroll to form'
+      });
+    }
+    
     document.getElementById("lead-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   // WhatsApp popup functions
   function openWhatsAppDirect() {
+    // TikTok Event: WhatsApp Chat Initiated
+    if (typeof window !== 'undefined' && window.ttq) {
+      window.ttq.track('Contact', {
+        content_name: 'WhatsApp Chat',
+        content_category: 'Direct Contact',
+        description: 'User initiated WhatsApp chat from popup'
+      });
+    }
+
     const waNumber = normalizePhone(process.env.NEXT_PUBLIC_WA_NUMBER || "62811944288");
     const message = "Halo, saya tertarik dengan program Kemitraan DRW Beauty Center";
     const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
