@@ -1,6 +1,17 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import { 
+  ShieldCheckIcon, 
+  BeakerIcon, 
+  AcademicCapIcon, 
+  PresentationChartLineIcon, 
+  CurrencyDollarIcon, 
+  DocumentTextIcon,
+  XMarkIcon
+} from "@heroicons/react/24/outline";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 
 /**
  * DRW Beauty Center – Landing Page (Kemitraan)
@@ -17,9 +28,10 @@ export default function LandingDRWBeautyCenter() {
   const [name, setName] = useState("");
   const [city, setCity] = useState("");
   const [phone, setPhone] = useState("");
-  const [packageTier, setPackageTier] = useState("Starter");
+  const [packageTier, setPackageTier] = useState("PLATINUM");
   const [agree, setAgree] = useState(false);
   const [error, setError] = useState("");
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   // Grab UTM params for tracking
   const utm = useMemo(() => {
@@ -58,7 +70,7 @@ export default function LandingDRWBeautyCenter() {
     if (!agree) return setError("Setujui kebijakan data terlebih dahulu.");
 
     // Build WhatsApp message
-    const to = normalizePhone(process.env.NEXT_PUBLIC_WA_NUMBER || "081234567890"); // GANTI .env
+    const to = normalizePhone(process.env.NEXT_PUBLIC_WA_NUMBER || "62811944288"); // GANTI .env
 
     const payload = {
       name,
@@ -94,6 +106,18 @@ export default function LandingDRWBeautyCenter() {
     document.getElementById("lead-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
+  // WhatsApp popup functions
+  function openWhatsAppDirect() {
+    const waNumber = normalizePhone(process.env.NEXT_PUBLIC_WA_NUMBER || "62811944288");
+    const message = "Halo, saya tertarik dengan program Kemitraan DRW Beauty Center";
+    const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
+    window.open(waUrl, '_blank');
+  }
+
+  function toggleChat() {
+    setIsChatOpen(!isChatOpen);
+  }
+
   useEffect(() => {
     // PLACEHOLDER: Meta Pixel / TikTok Pixel init bisa taruh di sini
     // if (window.fbq) window.fbq("track", "PageView");
@@ -106,7 +130,7 @@ export default function LandingDRWBeautyCenter() {
       <header className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-white/70 bg-white/80 border-b border-slate-100">
         <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-xl bg-pink-600" />
+            <img src="/favicon.ico" alt="DRW Beauty Center Logo" className="h-9 w-9 rounded-xl" />
             <span className="font-semibold">DRW Beauty Center</span>
           </div>
           <nav className="hidden md:flex items-center gap-6 text-sm">
@@ -183,31 +207,39 @@ export default function LandingDRWBeautyCenter() {
           {[
             {
               title: "Brand terpercaya 10+ tahun",
-              desc: "Reputasi kuat dan komunitas pelanggan loyal di banyak kota."
+              desc: "Reputasi kuat dan komunitas pelanggan loyal di banyak kota.",
+              icon: ShieldCheckIcon
             },
             {
               title: "Produk dermatology tested",
-              desc: "Repeat order tinggi, formulasi aman & terdaftar BPOM."
+              desc: "Repeat order tinggi, formulasi aman & terdaftar BPOM.",
+              icon: BeakerIcon
             },
             {
               title: "Training & support langsung",
-              desc: "Onboarding, SOP, dan pendampingan operasional harian."
+              desc: "Onboarding, SOP, dan pendampingan operasional harian.",
+              icon: AcademicCapIcon
             },
             {
               title: "Marketing kit siap pakai",
-              desc: "Desain promosi, konten, dan campaign terintegrasi."
+              desc: "Desain promosi, konten, dan campaign terintegrasi.",
+              icon: PresentationChartLineIcon
             },
             {
               title: "Potensi omzet besar",
-              desc: "Skalakan pendapatan hingga ratusan juta per bulan."
+              desc: "Skalakan pendapatan hingga ratusan juta per bulan.",
+              icon: CurrencyDollarIcon
             },
             {
               title: "Legalitas & keamanan",
-              desc: "Perizinan jelas, tata kelola kemitraan transparan."
+              desc: "Perizinan jelas, tata kelola kemitraan transparan.",
+              icon: DocumentTextIcon
             }
           ].map((b, i) => (
             <div key={i} className="rounded-3xl border border-slate-100 p-6 shadow-sm hover:shadow-md transition">
-              <div className="h-10 w-10 rounded-xl bg-pink-100 mb-4" />
+              <div className="h-10 w-10 rounded-xl bg-pink-100 mb-4 flex items-center justify-center">
+                <b.icon className="h-6 w-6 text-pink-600" />
+              </div>
               <h3 className="font-semibold">{b.title}</h3>
               <p className="mt-2 text-sm text-slate-600">{b.desc}</p>
             </div>
@@ -233,33 +265,69 @@ export default function LandingDRWBeautyCenter() {
       {/* PACKAGES */}
       <section id="packages" className="mx-auto max-w-6xl px-4 py-14">
         <h2 className="text-2xl md:text-3xl font-extrabold">Pilih Paket Sesuai Target Bisnismu</h2>
-        <div className="mt-8 grid md:grid-cols-3 gap-6">
+        <div className="mt-8 grid md:grid-cols-2 gap-8">
           {[
             {
-              tier: "Starter",
-              price: "Mulai ringkas",
-              bullets: ["Cocok pemula", "Toolkit dasar", "Panduan pembukaan"]
+              tier: "PLATINUM",
+              price: "49 juta",
+              description: "Kemitraan Beauty Center yang Fokus pada tindakan facial dasar dan sudah dilengkapi alat canggih standar rumah cantik",
+              bullets: [
+                "Alat Treatment Canggih:",
+                "• Alat 8 in 1: Microdermabrasi, High Frequency, Detox, Oxy spray, Vacuum",
+                "• Alat PDT Biolight, Ice Globe, Alat Vapozone, Alat Scrubber",
+                "",
+                "Perlengkapan Beauty Center DRW Skincare:",
+                "• Bed Facial Stainless, Display Hambalan, Seragam, Kemben, Handuk Facial",
+                "• Magnifying Lamp, Trolly, Stool Chair, Tripod + Ring Light (Live), Display Acrylic",
+                "• Bandana, Sertifikat",
+                "",
+                "Produk Skincare:",
+                "• 5 Paket Glow Series, 5 Paket Dark Spot/Flek Series, 5 Paket Acne Series",
+                "",
+                "TIDAK TERMASUK:",
+                "• Manajemen Fee Per Tahun 4,5 juta",
+                "• Deposit selama 2 tahun kerja sama"
+              ]
             },
             {
-              tier: "Growth",
-              price: "Fasilitas lengkap",
-              bullets: ["Sarana lebih lengkap", "Promosi bersama", "Support intensif"]
-            },
-            {
-              tier: "Premium",
-              price: "Branding eksklusif",
-              bullets: ["High-spec interior", "Kampanye terjadwal", "Pendampingan penuh"]
+              tier: "PROFESIONAL",
+              price: "99 juta",
+              description: "Kemitraan Beauty Center yang dilengkapi dengan mesin IPL dan Skin Analyzed",
+              bullets: [
+                "Alat Treatment Canggih:",
+                "• Alat 7 in 1: Oxy Spray, Hydra peel, Detox, Radio Frequency Mata, Radio Frequency Wajah, Cooling Wajah",
+                "• Biolight Topeng, Alat IPL, Alat Skin analyzer, Alat PDT, Alat Vapozone, Alat Scrubber",
+                "",
+                "Perlengkapan Beauty Center Skincare:",
+                "• Bed Facial Stainless, Seragam, Kemben, Handuk Facial, Bandana, Sertifikat",
+                "• Magnifying Lamp, Trolly, Stool Chair, Display Acrylic, Display Hambalan",
+                "",
+                "Produk Skincare:",
+                "• 5 Paket Glow Series, 5 Paket Dark Spot/Flek Series, 5 Paket Acne Series",
+                "",
+                "TIDAK TERMASUK:",
+                "• Manajemen Fee Per Tahun 9 juta",
+                "• Deposit selama 2 tahun kerja sama"
+              ]
             }
           ].map((p, i) => (
-            <div key={i} className="rounded-3xl border border-slate-100 p-6 shadow-sm">
-              <h3 className="text-lg font-bold">{p.tier}</h3>
-              <p className="mt-1 text-sm text-slate-600">{p.price}</p>
-              <ul className="mt-4 space-y-2 text-sm text-slate-700">
-                {p.bullets.map((b, j) => (
-                  <li key={j}>• {b}</li>
-                ))}
-              </ul>
-              <button onClick={() => { setPackageTier(p.tier); scrollToForm(); }} className="mt-5 w-full rounded-xl bg-pink-700 py-3 font-semibold text-white hover:bg-pink-800">
+            <div key={i} className="rounded-3xl border border-slate-100 p-6 shadow-sm bg-gradient-to-br from-pink-50 to-white">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-bold text-pink-800">{p.tier}</h3>
+                <div className="bg-pink-700 text-white px-4 py-2 rounded-full text-lg font-bold">{p.price}</div>
+              </div>
+              <p className="text-sm text-slate-600 mb-4 italic">{p.description}</p>
+              <div className="bg-white rounded-2xl p-4 shadow-inner">
+                <h4 className="font-semibold text-pink-700 mb-3">SUDAH TERMASUK:</h4>
+                <div className="space-y-1 text-sm text-slate-700 max-h-96 overflow-y-auto">
+                  {p.bullets.map((b, j) => (
+                    <div key={j} className={b === "" ? "py-1" : b.includes(":") ? "font-semibold text-pink-700 mt-3" : b.startsWith("TIDAK TERMASUK") ? "font-semibold text-red-600 mt-3" : ""}>
+                      {b}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <button onClick={() => { setPackageTier(p.tier); scrollToForm(); }} className="mt-6 w-full rounded-xl bg-pink-700 py-3 font-semibold text-white hover:bg-pink-800 transition-colors">
                 Minta Proposal Lengkap
               </button>
             </div>
@@ -348,9 +416,8 @@ export default function LandingDRWBeautyCenter() {
               <div>
                 <label className="text-sm font-medium">Paket Minat</label>
                 <select value={packageTier} onChange={(e) => setPackageTier(e.target.value)} className="mt-1 w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-pink-200">
-                  <option>Starter</option>
-                  <option>Growth</option>
-                  <option>Premium</option>
+                  <option>PLATINUM</option>
+                  <option>PROFESIONAL</option>
                 </select>
               </div>
               <div className="flex items-start gap-3 text-sm">
@@ -370,7 +437,7 @@ export default function LandingDRWBeautyCenter() {
         <div className="mx-auto max-w-6xl px-4 py-10 text-sm text-slate-600">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="h-8 w-8 rounded-lg bg-pink-600" />
+              <img src="/favicon.ico" alt="DRW Skincare Logo" className="h-8 w-8 rounded-lg" />
               <div>
                 <div className="font-semibold text-slate-800">DRW Skincare</div>
                 <div className="text-xs">Beauty Center Partnership Program</div>
@@ -385,6 +452,59 @@ export default function LandingDRWBeautyCenter() {
           <div className="mt-6 text-xs">© {new Date().getFullYear()} DRW Skincare. All rights reserved.</div>
         </div>
       </footer>
+
+      {/* WhatsApp Floating Chat Button */}
+      <div className="fixed bottom-6 right-6 z-50">
+        {/* Chat Popup */}
+        {isChatOpen && (
+          <div className="mb-4 bg-white rounded-2xl shadow-2xl border border-slate-100 p-6 w-80 animate-in slide-in-from-bottom-5">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                  <FontAwesomeIcon icon={faWhatsapp} className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-slate-800">DRW Beauty Center</h3>
+                  <p className="text-xs text-green-600">● Online</p>
+                </div>
+              </div>
+              <button 
+                onClick={toggleChat}
+                className="text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <XMarkIcon className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-3">
+              <div className="bg-slate-50 p-3 rounded-xl">
+                <p className="text-sm text-slate-700">Halo! 👋</p>
+                <p className="text-sm text-slate-700 mt-1">
+                  Tertarik dengan kemitraan Beauty Center DRW? Yuk konsultasi gratis sekarang!
+                </p>
+              </div>
+              <button 
+                onClick={openWhatsAppDirect}
+                className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2"
+              >
+                <FontAwesomeIcon icon={faWhatsapp} className="w-5 h-5" />
+                Chat via WhatsApp
+              </button>
+            </div>
+          </div>
+        )}
+        
+        {/* Floating Action Button */}
+        <button
+          onClick={toggleChat}
+          className="bg-green-500 hover:bg-green-600 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 animate-pulse"
+        >
+          {isChatOpen ? (
+            <XMarkIcon className="w-7 h-7" />
+          ) : (
+            <FontAwesomeIcon icon={faWhatsapp} className="w-7 h-7" />
+          )}
+        </button>
+      </div>
     </div>
   );
 }
