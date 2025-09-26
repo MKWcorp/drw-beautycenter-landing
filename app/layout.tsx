@@ -2,6 +2,21 @@ import "./globals.css";
 import type { Metadata } from "next";
 import Script from "next/script";
 
+const GTM_ID = 'GTM-MTTT3LSG';
+
+const GTM_CODE = `
+  (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','${GTM_ID}');
+`;
+
+const GTM_NOSCRIPT = `
+  <iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe>
+`;
+
 const META_PIXEL_CODE = `
   !function(f,b,e,v,n,t,s)
   {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -91,6 +106,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="id">
       <head>
+        {/* Google Tag Manager */}
+        <Script id="google-tag-manager" strategy="afterInteractive">
+          {GTM_CODE}
+        </Script>
+        {/* End Google Tag Manager */}
         {/* Meta Pixel Code Start */}
         <Script id="meta-pixel" strategy="afterInteractive">
           {META_PIXEL_CODE}
@@ -103,6 +123,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* TikTok Pixel Code End */}
       </head>
       <body>
+        {/* Google Tag Manager (noscript) */}
+        <noscript dangerouslySetInnerHTML={{ __html: GTM_NOSCRIPT }} />
+        {/* End Google Tag Manager (noscript) */}
         <noscript
           dangerouslySetInnerHTML={{ __html: META_PIXEL_NOSCRIPT }}
         />
